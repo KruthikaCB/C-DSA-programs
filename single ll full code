@@ -1,0 +1,209 @@
+#include <stdio.h>
+#include <stdlib.h>
+struct node{
+    int data;
+    struct node* link;
+};
+typedef struct node node_t;
+struct list{
+    node_t* head;
+};
+typedef struct list list_t;
+void init_list(list_t*);
+void delete_node(list_t *, int);	
+void insert_head(list_t *, int);
+void insert_end(list_t*,int);
+void insert_pos(list_t *, int,int);
+void display(list_t *);
+void delete_pos(list_t *, int);	
+int count_node(list_t *);
+int count_node_recur(node_t*);
+void print_reverse(list_t*);
+void print_reverse_recur(list_t*);
+int main(){
+    list_t l;
+    init_list(&l);
+    int n,ch,pos;
+    while(1){
+        display(&l);
+        printf("\n1..INSERT AT HEAD\n");
+        printf("2..INSERT AT END\n");
+        printf("3..display\n");
+        printf("4..insert at a given position\n");
+        printf("5..delete node given its value\n");
+        printf("6..delete node given its position\n");
+        printf("7..count number of nodes-recursion\n");
+        printf("8..print the list in reverse\n");
+        printf("9..exit\n");
+        printf("enter your choice");
+        scanf("%d",&ch);
+        switch(ch){
+            case 1:
+            printf("\nenter the element to be inserted..");
+            scanf("%d",&n);
+            insert_head(&l,n);
+            break;
+            case 2:
+            printf("\nenter the element to be inserted..");
+            scanf("%d",&n);
+            insert_end(&l,n);
+            break;
+            case 3:
+            display(&l);
+            break;
+            case 4:
+            printf("\nenter the element to be inserted..");
+            scanf("%d",&n);
+            printf("\nenter the position to inserted");
+            scanf("%d",&pos);
+            insert_pos(&l,n,pos);
+            break;
+            case 5:
+            printf("\nenter the element to be deleted..\n");
+            scanf("%d",&n);
+            delete_node(&l,n);
+            break;
+            case 6:
+            printf("\nenter the position to be deleted..\n");
+            scanf("%d",&pos);
+            delete_pos(&l,pos);
+            break;
+           case 7:
+           node_t* pres=l->head;
+            int k = count_node_recur(pres);
+            printf("no of node=%d",k);
+            break;
+            /*case 8:
+            print_reverse(&l);
+            break;*/
+            case 9:
+            exit(0);
+        }
+    }
+}
+void init_list(list_t* ptr_list){
+    ptr_list->head=NULL;
+}
+void insert_head(list_t* ptr_list,int n){
+    node_t * temp=(node_t*)malloc(sizeof(node_t));
+    temp->data=n;
+    temp->link=NULL;
+    temp->link=ptr_list->head;
+    ptr_list->head=temp;
+
+}
+void insert_end(list_t* ptr_list,int n){
+    node_t * temp=(node_t*)malloc(sizeof(node_t));
+    temp->data=n;
+    temp->link=NULL;
+    node_t *pres;
+    pres=ptr_list->head;
+    if(ptr_list->head==NULL){
+        ptr_list->head=temp;
+    }
+    else{
+        while(pres->link!=NULL){
+            pres=pres->link;
+        }
+        pres->link=temp;
+    }
+
+}
+void display(list_t* ptr_list){
+    node_t* pres;
+    pres=ptr_list->head;
+    if(ptr_list->head==NULL){
+        printf("list is empty");
+    
+    }
+    while(pres!=NULL){
+        printf("%d->",pres->data);
+        pres=pres->link;
+    }
+} 
+void insert_pos(list_t* ptr_list,int data,int pos){
+    node_t* temp,*pres,*prev;
+    pres=ptr_list->head;
+    temp=(node_t*)malloc(sizeof(node_t));
+    temp->data=data;
+    temp->link=NULL;
+    prev=NULL;
+    int i=1;
+    while((i<pos)&&(pres!=NULL)){
+        prev=pres;
+        pres=pres->link;
+        i++;
+    }
+    if(i==pos){
+        if(prev==NULL){
+            ptr_list->head=temp;
+        }
+        else if(pres->link==NULL){
+            pres->link=temp;
+
+        }
+        else{
+            prev->link=temp;
+            temp->link=pres;
+        }
+    }
+    else{
+        printf("node not found");
+    }
+}
+void delete_node(list_t* ptr_list,int n){
+    node_t* pres,*prev;
+    pres=ptr_list->head;
+    prev=NULL;
+    while((pres!=NULL)&&(pres->data!=n)){
+        prev=pres;
+        pres=pres->link;
+    }
+    if(pres!=NULL){
+        if(prev==NULL){
+            //first node
+            ptr_list->head=pres->link;
+        }
+        else {
+            prev->link=pres->link;
+        }
+        free(pres);
+    }
+    else{
+        printf("node not found");
+    }
+    
+}
+void delete_pos(list_t* ptr_list,int pos){
+    node_t *pres,*prev;
+    pres=ptr_list->head;
+    prev=NULL;
+    int i=1;
+    while((i<pos)&&(pres!=NULL)){
+        prev=pres;
+        pres=pres->link;
+        i++;
+    }
+    if((i==pos)&&(pres!=NULL)){
+        if(prev==NULL){
+            //first node
+            ptr_list->head=pres->link;
+        }
+        else{
+            prev->link=pres->link;
+        }
+        free(pres);
+    }
+    else{
+        printf("inavlid position");
+    }
+}
+int count_node_recur(node_t* pres){
+    int count=0;
+    if(pres->link==NULL){
+        return 1;
+    }
+    
+        count=1 + count_node_recur(pres->link);
+        return count;
+}
