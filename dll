@@ -1,0 +1,347 @@
+#include <stdio.h>
+#include <stdlib.h>
+struct node{
+    int key;
+    struct node *prev;
+    struct node *next;
+};
+typedef struct node node_t;
+struct dlist{
+    node_t* head;
+};
+typedef struct dlist dlist_t;
+void init_list(dlist_t*);
+void insert_head(dlist_t*,int);
+void display(dlist_t*);
+void insert_tail(dlist_t *,int);
+void delete_first(dlist_t*);
+void delete_last(dlist_t*);
+void delete_node(dlist_t*,int);
+void delete_pos(dlist_t*,int);
+void insert_pos(dlist_t*,int,int);
+void insert_after(dlist_t*,int,int);
+void insert_before(dlist_t*,int,int);
+int main(){
+    int ch,key,pos,value;
+    dlist_t l;
+    init_list(&l);
+    while(1){
+        display(&l);
+        printf("\n1..insert head");
+        printf("\n2..insert tail");
+        printf("\n3..display");
+        printf("\n4..delete first node");
+        printf("\n5..dlete last node");
+        printf("\n6..delete a node given value");
+        printf("\n7..delte a node given position ");
+        printf("\n8.insert at a given position");
+        printf("\n9..insert after given value");
+        printf("\n10..insert before given value");
+
+        printf("\n11.exit");
+        scanf("%d",&ch);
+        switch(ch){
+            case 1:
+            printf("\nEnter the key..");
+            scanf("%d",&key);
+            insert_head(&l,key);
+            break;
+            case 2:
+            printf("\n enter the avlue of key ");
+            scanf("%d",&key);
+            insert_tail(&l,key);
+            break;
+            case 3:
+            display(&l);
+            break;
+            case 4:
+            delete_first(&l);
+            break;
+            case 5:
+            delete_last(&l);
+            break;
+            case 6:
+            printf("\nenter the key..");
+            scanf("%d",&key);
+            delete_node(&l,key);
+            break;
+            case 7:
+            printf("\nenter the position");
+            scanf("%d",&pos);
+            delete_pos(&l,pos);
+            break;
+            case 8:
+            printf("\nenter the key and position");
+            scanf("%d %d",&key,&pos);
+            insert_pos(&l,key,pos);
+            break;
+            case 9:
+            printf("\nenter the value and key");
+            scanf("%d %d",&value,&key);
+            insert_after(&l,value,key);
+            break;
+            case 10:
+            printf("\nneter the value and key");
+            scanf("%d %d",&value,&key);
+            insert_before(&l,value,key);
+            break;
+            case 11:
+            exit(0);
+        }
+    }
+}
+void init_list(dlist_t *ptr_list){
+    ptr_list->head=NULL;
+    
+}
+void insert_head(dlist_t *ptr_list,int key){
+    //create node
+    node_t *temp;
+    temp=(node_t*)malloc(sizeof(node_t));
+    temp->key=key;
+    temp->next=temp->prev=NULL;
+    //if first node?
+    if(ptr_list->head==NULL)
+        ptr_list->head=temp;
+    else{
+        temp->next=ptr_list->head;
+        ptr_list->head->prev=temp;
+        ptr_list->head=temp;
+    }
+}
+void display(dlist_t *ptr_list){
+    node_t *pres;
+    pres=ptr_list->head;
+    if(pres==NULL){
+        printf("\nempty list ..\n");
+    }
+    else{
+        while(pres!=NULL){
+            printf("%d<->",pres->key);
+            pres=pres->next;
+        }
+    }
+    printf("\n");
+}
+void insert_tail(dlist_t *ptr_list,int key){
+    node_t *temp=(node_t*)malloc(sizeof(node_t));
+    node_t *pres;
+    temp->key=key;
+    temp->prev=temp->next=NULL;
+    //if list is emmpty
+    if(ptr_list->head==NULL){
+        ptr_list->head=temp;
+
+    }
+    
+    else{
+        pres=ptr_list->head;
+        while(pres->next!=NULL){
+            pres=pres->next;
+        }
+        pres->next=temp;
+        temp->prev=pres;
+    }
+
+}
+void delete_first(dlist_t *ptr_list){
+    node_t* pres;
+    if(ptr_list->head==NULL){
+        printf("list is empty");
+    }
+    
+    
+    else{
+        pres=ptr_list->head;
+        if(pres->next==NULL){
+            ptr_list->head=NULL;
+        }
+        else{
+          pres->next->prev=NULL;
+          ptr_list->head=pres->next;
+      
+        }
+        
+    free(pres);
+    }
+
+}
+void delete_last(dlist_t *ptr_list){
+    node_t*pres;
+    if(ptr_list->head==NULL){
+        printf("list is empty");
+    }
+    else{
+        pres=ptr_list->head;
+        if(pres->next==NULL){
+            ptr_list->head=NULL;
+        }
+        else{
+            //go to last node
+            while(pres->next!=NULL){
+                pres=pres->next;
+            }
+            pres->prev->next=NULL;
+            
+        }
+        free(pres);
+    }
+}
+void delete_node(dlist_t* ptr_list,int key){
+    node_t *pres;
+    pres=ptr_list->head;
+    while((pres!=NULL)&&(pres->key!=key)){
+        pres=pres->next;
+    }
+    if(pres!=NULL){
+        //node found
+        //if only one node
+        if((pres->next==NULL)&&(pres->prev==NULL)){
+            ptr_list->head=NULL;
+        }
+        else if(pres->prev==NULL){
+            //first node
+            pres->next->prev=NULL;
+            ptr_list->head=pres->next;
+        }
+        else if(pres->next==NULL){
+            //last node
+            pres->prev->next=NULL;
+            
+        }
+        else{
+            //somewhere in the middle
+            pres->prev->next=pres->next;
+            pres->next->prev=pres->prev;
+        }
+        free(pres);
+    }
+    else{
+        //pres==NULL;
+        printf("\nNODE NOT FOUND..\n");
+    }
+}
+void delete_pos(dlist_t *ptr_list,int pos){
+    node_t *pres;
+    int i=1;
+    pres=ptr_list->head;
+    while((pres!=NULL)&&(i<pos)){
+        pres=pres->next;
+        i++;
+    }
+    if(pres!=NULL){
+        //node found
+        //if only one node
+        if((pres->next==NULL)&&(pres->prev==NULL)){
+            ptr_list->head=NULL;
+        }
+        //if first node
+        else if(pres->prev==NULL){
+            pres->next->prev=NULL;
+            ptr_list->head=pres->next;
+        }
+        else if(pres->next==NULL){
+            //last node
+            pres->prev->next=NULL;
+        }
+        else{
+            pres->prev->next=pres->next;
+            pres->next->prev=pres->prev;
+
+        }
+        free(pres);
+    }
+    else{
+        //pres==NULL:
+        printf("\node not found inavlid position");
+    }
+}
+void insert_pos(dlist_t *ptr_list,int key,int pos){
+    node_t *temp,*pres;
+    int i=1;
+    temp=(node_t *)malloc(sizeof(node_t));
+    temp->key=key;
+    temp->prev=temp->next=NULL;
+    pres=ptr_list->head;
+    while((i<pos)&&(pres->next!=NULL)){
+        i++;
+        pres=pres->next;
+    }
+    if(i==pos)//position found
+    {
+        if(pres->prev==NULL){
+            //first node
+            pres->prev=temp;
+            temp->next=pres;
+            ptr_list->head=temp;
+        }
+        else{
+            //in middle
+            pres->prev->next=temp;
+            temp->next=pres;
+            pres->prev=temp;
+        }
+    }
+    else if(i==pos-1){
+        //insert at end
+        pres->next=temp;
+        temp->prev=pres;
+    }
+    else{
+        printf("invalid position..\n");
+    }
+
+}
+void insert_after(dlist_t *ptr_list,int value,int key){
+    node_t *temp,*pres;
+    pres=ptr_list->head;
+    temp=(node_t*)malloc(sizeof(node_t));
+    temp->key=key;
+    temp->prev=temp->next=NULL;
+    while((pres->key!=value)&&(pres->next!=NULL)){
+        pres=pres->next;}
+        if(pres->key==value){
+            if(pres->next!=NULL){
+                //before the last node
+                temp->next=pres->next;
+                pres->next=temp;
+                temp->prev=pres;
+            }
+            else{
+                //last node
+                pres->next=temp;
+                temp->prev=pres;
+            }
+        }
+        else{
+            printf("\n node not found..");
+            free(temp);
+        }
+    }
+void insert_before(dlist_t *ptr_list,int value,int key){
+    node_t *temp,*pres;
+    pres=ptr_list->head;
+    temp=(node_t*)malloc(sizeof(node_t));
+    temp->key=key;
+    temp->next=temp->prev=NULL;
+    while((pres->key!=value)&&(pres->next!=NULL)){
+        pres=pres->next;
+    }
+    if(pres->key==value){
+        if(pres->prev==NULL){
+            
+            temp->next=pres;
+            pres->prev=temp;
+            ptr_list->head=temp;
+        }
+        else{
+            pres->prev->next=temp;
+            temp->prev=pres->prev;
+            temp->next=pres;
+            pres->prev=temp;
+        }
+    }
+    else{
+        printf("\n node not found..");
+    }
+}
