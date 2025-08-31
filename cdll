@@ -1,0 +1,137 @@
+#include <stdio.h>
+#include <stdlib.h>
+struct node{
+    int data;
+    struct node *prev,*next;
+};
+typedef struct node node_t;
+struct cdlist{
+    node_t *head;
+};
+typedef struct cdlist cdlist_t;
+void insert_head(cdlist_t*,int);
+void insert_tail(cdlist_t*,int);
+void delete_node(cdlist_t*,int);
+void display(cdlist_t*);
+void init_list(cdlist_t*);
+int main(){
+    int ch,x;
+    cdlist_t l;
+    init_list(&l);
+    while(1){
+        display(&l);
+        printf("\n1..insert head\n");
+        printf("2..insert tail\n");
+        printf("3..delete a node\n");
+        printf("4..display\n");
+        printf("5..exit\n");
+        scanf("%d",&ch);
+        switch(ch){
+            case 1:
+            printf("enter the element :\n");
+            scanf("%d",&x);
+            insert_head(&l,x);
+            break;
+            case 2:
+            printf("enter the element :\n");
+            scanf("%d",&x);
+            insert_tail(&l,x);
+            break;
+            case 3:
+            printf("enter the element to be deleted:\n");
+            scanf("%d",&x);
+            delete_node(&l,x);
+            break;
+            case 4:
+            display(&l);
+            break;
+            case 5:
+            exit(0);
+            default:
+            printf("invalid choice\n");
+        }
+    }
+}
+void init_list(cdlist_t* ptr_list){
+    ptr_list->head=NULL;
+}
+void insert_head(cdlist_t* ptr_list,int x){
+    node_t* newnode=(node_t*)malloc(sizeof(node_t));
+    newnode->data=x;
+    if(ptr_list->head==NULL){
+        newnode->next=newnode->prev=newnode;
+        ptr_list->head=newnode;
+    }
+    else{
+        node_t* last =ptr_list->head->prev;
+        newnode->next=ptr_list->head;
+        newnode->prev=last;
+        last->next=newnode;
+        ptr_list->head->prev=newnode;
+        ptr_list->head=newnode;
+    }
+}
+void insert_tail(cdlist_t* ptr_list,int x){
+    node_t* newnode=(node_t*)malloc(sizeof(node_t));
+    newnode->data=x;
+    if(ptr_list->head==NULL){
+        newnode->next=newnode->prev=newnode;
+        ptr_list->head=newnode;
+    }
+    else{
+        node_t* last=ptr_list->head->prev;
+        newnode->next=ptr_list->head;
+        newnode->prev=last;
+        last->next=newnode;
+        ptr_list->head->prev=newnode;
+
+    }
+}
+void delete_node(cdlist_t* ptr_list, int key) {
+    if(ptr_list->head == NULL) {
+        printf("List is empty!\n");
+        return;
+    }
+
+    node_t* curr = ptr_list->head, *prevNode;
+    while(curr->data != key) {
+        curr = curr->next;
+        if(curr == ptr_list->head) {
+            printf("Node not found!\n");
+            return;
+        }
+    }
+
+    // Only one node
+    if(curr->next == curr && curr->prev == curr) {
+        ptr_list->head = NULL;
+        free(curr);
+        return;
+    }
+
+    // If deleting head
+    if(curr == ptr_list->head)
+        ptr_list->head = curr->next;
+
+    prevNode = curr->prev;
+    prevNode->next = curr->next;
+    curr->next->prev = prevNode;
+
+    free(curr);
+}
+
+// Display list
+void display(cdlist_t* ptr_list) {
+    if(ptr_list->head == NULL) {
+        printf("\nList is empty\n");
+        return;
+    }
+
+    node_t* temp = ptr_list->head;
+    printf("\nList: ");
+    do {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    } while(temp != ptr_list->head);
+    printf("\n");
+}
