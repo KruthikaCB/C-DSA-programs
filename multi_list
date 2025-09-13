@@ -1,0 +1,106 @@
+//multilist program 
+#include <stdio.h>
+#include <stdlib.h>
+struct col_node{
+    int col;
+    int data;
+    struct col_node* next_col;
+};
+struct row_node{
+    int row;
+    struct row_node* next_row;
+    struct col_node* next_col;
+};
+typedef struct col_node col_node_t;
+typedef struct row_node row_node_t;
+row_node_t* create_rows(int);
+void insert_end(row_node_t*,int,int);
+void display(row_node_t*);
+void insert_matrix(row_node_t*,int (*a)[],int,int);
+int main(){
+    int i,j,col,row;
+    int a[10][10];
+    row_node_t *head;
+    head=NULL;
+    printf("enter the row and col\n");
+    scanf("%d %d",&row,&col);
+    for(i=0;i<row;i++){
+        for(j=0;j<col;j++){
+            scanf("%d",&a[i][j]);
+        }
+    }
+    head=create_rows(row);
+    insert_matrix(head,a,row,col);
+    display(head);
+
+}
+row_node_t* create_rows(int rows){
+    row_node_t *p,*q,*temp;
+    p=q=NULL;
+    for(int i=0;i<rows;i++){
+        temp=(row_node_t*)malloc(sizeof(row_node_t));
+        temp->row=i;
+        temp->next_col=NULL;
+        temp->next_row=NULL;
+        if(p==NULL){
+           q=p=temp;
+
+        }else{
+            q->next_row=temp;
+            q=temp;
+        }
+
+    }
+    return p;
+}
+void insert_end(row_node_t*p,int j,int key){
+    col_node_t* temp,*pres;
+    temp=(col_node_t*)malloc(sizeof(col_node_t));
+    temp->data=key;
+    temp->col=j;
+    temp->next_col=NULL;
+    
+    pres=p->next_col;
+    if(pres==NULL){
+        p->next_col=temp;
+    }
+    else{
+        while(pres->next_col!=NULL){
+            pres=pres->next_col;
+        }
+        pres->next_col=temp;
+    }
+}
+void display(row_node_t* p){
+    col_node_t* pres;
+    if(p==NULL){
+        printf("list is empty\n");
+    }
+    else{
+    while(p!=NULL){
+        printf("%d:->",p->row);
+        pres=p->next_col;
+        while(pres!=NULL){
+            printf("%d,%d->",pres->col,pres->data);
+            pres=pres->next_col;
+        }
+        p=p->next_row;
+        printf("\n");
+    }
+}
+}
+void insert_matrix(row_node_t* head,int (*a)[10],int row,int col){
+    row_node_t* p;
+    int i,j;
+    p=head;
+    for(i=0;i<row;i++){
+        for(j=0;j<col;j++){
+            if(a[i][j]!=0){
+                insert_end(p,j,a[i][j]);
+            }
+            
+        }
+        p=p->next_row;
+
+    }
+}
