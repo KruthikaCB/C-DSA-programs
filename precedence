@@ -1,0 +1,8 @@
+| Symbol         | Input Precedence | Stack Precedence |
+| -------------- | ---------------- | ---------------- |
+| `+` , `-`      | 1                | 2                |
+| `*` , `/`      | 3                | 4                |
+| `(`            | 7                | 0                |
+| `)`            | 0                | – (not stored)   |
+| Operand        | 5                | 6                |
+| `#` (sentinel) | –                | -1               |
