@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include<stdlib.h>
+struct stack{
+    int data[100];
+    int top;
+};
+typedef struct stack stack_t;
+void init(stack_t* st){
+    st->top=-1;
+}
+void push(stack_t *st,int x){
+    st->data[(++st->top)]=x;
+}
+int pop(stack_t *st){
+    return st->data[(st->top)--];
+}
+int peep(stack_t* st){
+    return st->data[(st->top)];
+}
+int isEmpty(stack_t st){
+    if(st.top==-1)
+    return 1;
+return 0;
+}
+void NGE(int *arr,int n){
+    int nge[100];
+    stack_t st;
+    init(&st);
+    for(int i=n-1;i>=0;i--){
+        while(!isEmpty(st)&&(peep(&st)<=arr[i])){
+            pop(&st);
+        }
+        if(isEmpty(st)){
+            nge[i]=-1;
+        }
+        else{
+            nge[i]=peep(&st);
+        }
+        push(&st,arr[i]);
+    }
+    for(int i=0;i<n;i++){
+        printf("%d->%d ",arr[i],nge[i]);
+    }
+}
+int main(){
+    int n;
+    printf("enter the size of array");
+    scanf("%d",&n);
+    int arr[n];
+    for(int i=0;i<n;i++){
+        scanf("%d",&arr[i]);
+    }
+    NGE(arr,n);
+}
